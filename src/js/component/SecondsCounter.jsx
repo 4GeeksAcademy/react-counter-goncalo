@@ -14,7 +14,8 @@ const SecondsCounter = () => {
 
     const increaseCounter = () => {
         setShowIncreaseCounter(true)
-        setShowDecCreaseCounter(false)   
+        setShowDecCreaseCounter(false) 
+        setIsRuning(true)  
         if(isRunning) {    
             setInterval(() => {
                 setCounter(prevCount => {
@@ -28,7 +29,7 @@ const SecondsCounter = () => {
     const decreaseCounter = () => {
         setShowIncreaseCounter(false)
         setShowDecCreaseCounter(true)
-       
+        setIsRuning(true)
             setInterval(()=>{
                 setDecCounter(prevCount => {
                     const nextCount = Number(prevCount) - 1
@@ -41,20 +42,27 @@ const SecondsCounter = () => {
     const chooseCounter = () => {
         if (showIncreaseCounter){
             return counter.split('').map((digit, index) => (
-                <div key={index} className="digit"><b>{digit}</b></div>
+                isRunning && <div key={index} className="digit"><b>{digit}</b></div>
             ));
         }
         if (showIDecCreaseCounter) {
             return decCounter.split('').map((digit, index) => (
-                <div key={index} className="digit"><b>{digit}</b></div>
+                isRunning && <div key={index} className="digit"><b>{digit}</b></div>
             ));
         }       
     }
 
     const pauseResume = () => {
         setIsRuning(!isRunning)
-        console.log(isRunning)
     }
+
+    const reset = () => {
+        setCounter("000000");
+        setIsRuning(false);
+       
+    }
+
+    
 
     return (
         <>
@@ -71,7 +79,7 @@ const SecondsCounter = () => {
             <div className="buttons-container">
                 <button><FontAwesomeIcon icon={faPlay}/></button>
                 <button  onClick={pauseResume}><FontAwesomeIcon icon={faPause}/></button>
-                <button><FontAwesomeIcon icon={faCircleStop}/></button>
+                <button onClick={reset}><FontAwesomeIcon icon={faCircleStop}/></button>
             </div>
         </>
     )

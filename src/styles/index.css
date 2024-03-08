@@ -44,3 +44,8 @@ body {
     background-repeat: no-repeat;
     height: 100vm
 }
+
+.buttons-container {
+    margin-left: 50%;
+    margin-top: 30px;
+}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClock } from '@fortawesome/free-regular-svg-icons';
 import { faPlay, faPause, faCircleStop } from '@fortawesome/free-solid-svg-icons';
@@ -7,62 +7,90 @@ const SecondsCounter = () => {
 
     const [counter, setCounter] = useState("000000")  // Set the increase Counter initial value
     const [decCounter, setDecCounter] = useState("999999")  // Set the decrease Counter initial value
-      // choose wich counter to display 
     const [showIncreaseCounter, setShowIncreaseCounter] = useState(true)
     const [showIDecCreaseCounter, setShowDecCreaseCounter] = useState(false)
-    const [isRunning, setIsRuning] = useState(true)  // Check if the counter is running
+    const [isRunning, setIsRuning] = useState(true)
+    const [increaseInterval, setIncreaseInterval] = useState(null);
+    const [decreaseInterval, setDecreaseInterval] = useState(null);
 
     const increaseCounter = () => {
-        setShowIncreaseCounter(true)
-        setShowDecCreaseCounter(false) 
-        setIsRuning(true)  
-        if(isRunning) {    
-            setInterval(() => {
+        setShowIncreaseCounter(true);
+        setShowDecCreaseCounter(false);
+        setIsRuning(true);
+    
+        if (isRunning) {
+            const intervalId = setInterval(() => {
                 setCounter(prevCount => {
-                    const nextCount = Number(prevCount) + 1; 
+                    const nextCount = Number(prevCount) + 1;
                     return nextCount.toString().padStart(6, "0");
                 });
-            }, 1000);     
-        } 
-      }
+            }, 1000);
+            
+            setIncreaseInterval(intervalId); // Set interval ID for increasing counter
+        }
+    }
     
     const decreaseCounter = () => {
-        setShowIncreaseCounter(false)
-        setShowDecCreaseCounter(true)
-        setIsRuning(true)
-            setInterval(()=>{
+        setShowIncreaseCounter(false);
+        setShowDecCreaseCounter(true);
+        setIsRuning(true);
+    
+        if (isRunning) {
+            const intervalId = setInterval(() => {
                 setDecCounter(prevCount => {
-                    const nextCount = Number(prevCount) - 1
-                    return nextCount.toString().padStart(6,"9")
-                })
-            },1000)
-        
+                    const nextCount = Number(prevCount) - 1;
+                    return nextCount.toString().padStart(6, "9");
+                });
+            }, 1000);
+            
+            setDecreaseInterval(intervalId); // Set interval ID for decreasing counter
+        }
     }
-
+    
     const chooseCounter = () => {
-        if (showIncreaseCounter){
+        if (showIncreaseCounter) {
             return counter.split('').map((digit, index) => (
-                isRunning && <div key={index} className="digit"><b>{digit}</b></div>
+                <div key={index} className="digit"><b>{digit}</b></div>
             ));
         }
         if (showIDecCreaseCounter) {
             return decCounter.split('').map((digit, index) => (
-                isRunning && <div key={index} className="digit"><b>{digit}</b></div>
+                <div key={index} className="digit"><b>{digit}</b></div>
             ));
-        }       
+        }
     }
 
     const pauseResume = () => {
-        setIsRuning(!isRunning)
+        setIsRuning(!isRunning);
+        if (!isRunning) {
+            if (showIncreaseCounter) {
+                const intervalId = setInterval(() => {
+                    setCounter(prevCount => {
+                        const nextCount = Number(prevCount) + 1;
+                        return nextCount.toString().padStart(6, "0");
+                    });
+                }, 1000);
+                setIncreaseInterval(intervalId);
+            } else if (showIDecCreaseCounter) {
+                const intervalId = setInterval(() => {
+                    setDecCounter(prevCount => {
+                        const nextCount = Number(prevCount) - 1;
+                        return nextCount.toString().padStart(6, "9");
+                    });
+                }, 1000);
+                setDecreaseInterval(intervalId);
+            }
+        } else {
+            clearInterval(increaseInterval);
+            clearInterval(decreaseInterval);
+        }
     }
 
     const reset = () => {
         setCounter("000000");
         setIsRuning(false);
-       
+        
     }
-
-    
 
     return (
         <>
@@ -77,8 +105,8 @@ const SecondsCounter = () => {
                 </div>
             </div>
             <div className="buttons-container">
-                <button><FontAwesomeIcon icon={faPlay}/></button>
-                <button  onClick={pauseResume}><FontAwesomeIcon icon={faPause}/></button>
+                <button onClick={increaseCounter}><FontAwesomeIcon icon={faPlay}/></button>
+                <button onClick={pauseResume}><FontAwesomeIcon icon={faPause}/></button>
                 <button onClick={reset}><FontAwesomeIcon icon={faCircleStop}/></button>
             </div>
         </>
